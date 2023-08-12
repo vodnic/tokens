@@ -7,6 +7,9 @@ services:
       POSTGRES_DB: tokenDB
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    ports:
+      # Port exposed only for development purposes
+      - 15432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
 
