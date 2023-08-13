@@ -1,4 +1,4 @@
-package models;
+package com.tangent.tokens.models;
 
 import lombok.Value;
 import java.util.UUID;
