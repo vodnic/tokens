@@ -27,6 +27,24 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+        <addUniqueConstraint
+                tableName="tokens"
+                columnNames="address,chain_id"
+                constraintName="uq_address_chain_id"/>
+        <createIndex
+                tableName="tokens"
+                indexName="idx_address_chain_id"
+                unique="true">
+            <column name="address" />
+            <column name="chain_id" />
+        </createIndex>
+        <createIndex
+                tableName="tokens"
+                indexName="idx_symbol_chain_id"
+                unique="false">
+            <column name="symbol" />
+            <column name="chain_id" />
+        </createIndex>
     </changeSet>
 
 </databaseChangeLog>
