@@ -11,6 +11,6 @@ import java.util.UUID;
 @Repository
 public interface TokenRepository extends JpaRepository<Token, UUID> {
 
-    public Optional<Token> findByAddressAndChainId(Address address, int chainId);
+    Optional<Token> findByAddressAndChainId(Address address, int chainId);
 
 }
