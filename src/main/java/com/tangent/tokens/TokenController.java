@@ -1,6 +1,7 @@
 package com.tangent.tokens;
 
 import com.tangent.tokens.exception.ObjectNotFoundException;
+import com.tangent.tokens.model.Address;
 import com.tangent.tokens.model.Token;
 import com.tangent.tokens.exception.InvalidRequestException;
 import com.tangent.tokens.service.TokenService;
@@ -8,14 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/token")
@@ -35,17 +32,22 @@ public class TokenController {
         return tokenService.listTokens();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getTokenById(@PathVariable("id") String id) {
-        UUID uuid;
+    @GetMapping("/{address}")
+    public ResponseEntity<?> getTokenById(
+            @PathVariable("address") String addressParam,
+            @RequestParam(name="chainId", required = false, defaultValue = "1") int chainId)
+    {
+
+        Address address;
         try {
-            uuid = UUID.fromString(id);
+            address = Address.fromString(addressParam);
         } catch (IllegalArgumentException e) {
-            throw new InvalidRequestException("Invalid UUID string '" + id + "'.");
+            throw new InvalidRequestException("Invalid address");
         }
-        Optional<Token> tokenOptional = tokenService.getTokenById(uuid);
+
+        Optional<Token> tokenOptional = tokenService.getTokenByAddressAndChain(address, chainId);
         if (tokenOptional.isEmpty()) {
-            throw new ObjectNotFoundException("Token with ID " + id + " not found.");
+            throw new ObjectNotFoundException("Token not found");
         }
         return ResponseEntity.ok(tokenOptional.get());
     }

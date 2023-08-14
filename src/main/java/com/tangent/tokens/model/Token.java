@@ -1,5 +1,6 @@
 package com.tangent.tokens.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,6 +13,7 @@ public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
+    @JsonIgnore
     private UUID id;
 
     @Column(name = "address", nullable = false, length = 42)

@@ -1,5 +1,6 @@
 package com.tangent.tokens.service;
 
+import com.tangent.tokens.model.Address;
 import com.tangent.tokens.model.Token;
 import com.tangent.tokens.repository.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,10 @@ public class TokenService {
 
     public Optional<Token> getTokenById(UUID id) {
         return tokenRepository.findById(id);
+    }
+
+    public Optional<Token> getTokenByAddressAndChain(Address address, int chainId) {
+        return tokenRepository.findByAddressAndChainId(address, chainId);
     }
 
     public List<Token> listTokens() {
