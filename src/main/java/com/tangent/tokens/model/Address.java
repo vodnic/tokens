@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
 
 @Data
+@EqualsAndHashCode
 public class Address {
 
     private static final String PREFIX = "0x";
@@ -32,20 +34,6 @@ public class Address {
     @Override
     public String toString() {
         return value;
-    }
-
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        }
-        if (!(o instanceof Address other)) {
-            return false;
-        }
-        return this.value.equals(other.value);
-    }
-
-    public int hashCode() {
-        return value.hashCode();
     }
 
     public static class AddressSerializer extends JsonSerializer<Address> {
