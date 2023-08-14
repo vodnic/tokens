@@ -10,6 +10,7 @@ class TokensApplicationTests {
 
 	@Test
 	void contextLoads() {
+		TokensApplication.main(new String[] {});
 	}
 
 }
