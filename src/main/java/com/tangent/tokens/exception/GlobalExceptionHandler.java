@@ -20,12 +20,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<String> handleInvalidRequestException(InvalidRequestException ex) {
         logger.debug("Invalid request: {}", ex.getMessage());
-        return new ResponseEntity<>("400 Bad Request: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("400 Bad Request: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseEntity<String> handleObjectNotFoundException(ObjectNotFoundException ex) {
         logger.debug("Object not found '{}'", ex.getMessage());
-        return new ResponseEntity<>("404 Not Found: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("404 Not Found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }
