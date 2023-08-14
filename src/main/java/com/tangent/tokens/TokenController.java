@@ -44,7 +44,7 @@ public class TokenController {
             throw new InvalidRequestException("Invalid UUID string '" + id + "'.");
         }
         Optional<Token> tokenOptional = tokenService.getTokenById(uuid);
-        if (!tokenOptional.isPresent()) {
+        if (tokenOptional.isEmpty()) {
             throw new ObjectNotFoundException("Token with ID " + id + " not found.");
         }
         return ResponseEntity.ok(tokenOptional.get());
