@@ -74,4 +74,12 @@ public class TokenControllerTest {
         verify(tokenService, never()).getTokenByAddressAndChain(any(Address.class), anyInt());
     }
 
+    @Test
+    public void testGetTokenById_500OnServerError() throws Exception {
+        when(tokenService.getTokenByAddressAndChain(any(Address.class), anyInt())).thenThrow(new RuntimeException());
+
+        mockMvc.perform(get("/token/0x23f4569002a5A07f0Ecf688142eEB6bcD883eeF8"))
+                .andExpect(status().isInternalServerError());
+    }
+
 }
