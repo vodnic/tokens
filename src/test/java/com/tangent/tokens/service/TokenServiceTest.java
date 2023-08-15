@@ -22,6 +22,9 @@ class TokenServiceTest {
     @Mock
     private TokenRepository tokenRepository;
 
+    @Mock
+    private EvmRpcService evmRpcService;
+
     @InjectMocks
     private TokenService tokenService;
 
@@ -44,7 +47,7 @@ class TokenServiceTest {
     }
 
     @Test
-    public void testGetTokenByAddressAndChain() {
+    public void testGetTokenByAddressAndChain_dbEntryExists_returnStored() {
         Address address = Address.fromString("0x7d90d74b3501440f95fb8ee55af2ed2933c18fdd");
         int chainId = 1;
         Token token = new Token();
@@ -53,6 +56,26 @@ class TokenServiceTest {
         Token result = tokenService.getTokenByAddressAndChain(address, chainId);
 
         assertEquals(token, result);
+    }
+
+    @Test
+    public void testGetTokenByAddressAndChain_noDbEntry_fetchFromRPC() {
+        Address address = Address.fromString("0x7d90d74b3501440f95fb8ee55af2ed2933c18fdd");
+        int chainId = 1;
+        when(tokenRepository.findByAddressAndChainId(address, chainId)).thenReturn(Optional.empty());
+        when(evmRpcService.getTokenName(address, chainId)).thenReturn("Test Token");
+        when(evmRpcService.getTokenSymbol(address, chainId)).thenReturn("TEST");
+        when(evmRpcService.getTokenDecimals(address, chainId)).thenReturn(18);
+
+        Token result = tokenService.getTokenByAddressAndChain(address, chainId);
+
+        Token expectedToken = new Token();
+        expectedToken.setAddress(address);
+        expectedToken.setChainId(1);
+        expectedToken.setName("Test Token");
+        expectedToken.setSymbol("TEST");
+        expectedToken.setDecimals(18);
+        assertEquals(expectedToken, result);
     }
 
     @Test
