@@ -50,10 +50,9 @@ class TokenServiceTest {
         Token token = new Token();
         when(tokenRepository.findByAddressAndChainId(address, chainId)).thenReturn(Optional.of(token));
 
-        Optional<Token> result = tokenService.getTokenByAddressAndChain(address, chainId);
+        Token result = tokenService.getTokenByAddressAndChain(address, chainId);
 
-        assertTrue(result.isPresent());
-        assertEquals(token, result.get());
+        assertEquals(token, result);
     }
 
     @Test

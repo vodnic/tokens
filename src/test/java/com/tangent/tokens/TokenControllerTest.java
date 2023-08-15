@@ -1,5 +1,6 @@
 package com.tangent.tokens;
 
+import com.tangent.tokens.exception.ObjectNotFoundException;
 import com.tangent.tokens.model.Address;
 import com.tangent.tokens.model.Token;
 import com.tangent.tokens.service.TokenService;
@@ -10,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,7 +44,7 @@ public class TokenControllerTest {
         Address mockAddress = Address.fromString(addressParam);
         Token mockToken = new Token();
 
-        when(tokenService.getTokenByAddressAndChain(eq(mockAddress), anyInt())).thenReturn(Optional.of(mockToken));
+        when(tokenService.getTokenByAddressAndChain(eq(mockAddress), anyInt())).thenReturn(mockToken);
 
         mockMvc.perform(get("/token/" + addressParam))
                 .andExpect(status().isOk())
@@ -58,7 +58,7 @@ public class TokenControllerTest {
         String addressParam = "0x23f4569002a5A07f0Ecf688142eEB6bcD883eeF8";
         Address mockAddress = Address.fromString(addressParam);
 
-        when(tokenService.getTokenByAddressAndChain(eq(mockAddress), anyInt())).thenReturn(Optional.empty());
+        when(tokenService.getTokenByAddressAndChain(eq(mockAddress), anyInt())).thenThrow(new ObjectNotFoundException(""));
 
         mockMvc.perform(get("/token/" + addressParam))
                 .andExpect(status().isNotFound());

@@ -1,9 +1,8 @@
 package com.tangent.tokens;
 
-import com.tangent.tokens.exception.ObjectNotFoundException;
+import com.tangent.tokens.exception.InvalidRequestException;
 import com.tangent.tokens.model.Address;
 import com.tangent.tokens.model.Token;
-import com.tangent.tokens.exception.InvalidRequestException;
 import com.tangent.tokens.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/token")
@@ -45,11 +43,9 @@ public class TokenController {
             throw new InvalidRequestException("Invalid address");
         }
 
-        Optional<Token> tokenOptional = tokenService.getTokenByAddressAndChain(address, chainId);
-        if (tokenOptional.isEmpty()) {
-            throw new ObjectNotFoundException("Token not found");
-        }
-        return ResponseEntity.ok(tokenOptional.get());
+        Token token = tokenService.getTokenByAddressAndChain(address, chainId);
+
+        return ResponseEntity.ok(token);
     }
 
 
