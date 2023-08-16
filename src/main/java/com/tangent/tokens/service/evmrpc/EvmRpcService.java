@@ -1,51 +1,35 @@
-package com.tangent.tokens.service;
+package com.tangent.tokens.service.evmrpc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tangent.tokens.exception.ObjectNotFoundException;
 import com.tangent.tokens.model.Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
-import org.web3j.abi.datatypes.generated.Uint8;
 import org.web3j.abi.datatypes.Utf8String;
-import org.web3j.protocol.Web3j;
+import org.web3j.abi.datatypes.generated.Uint8;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthCall;
-import org.web3j.protocol.http.HttpService;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class EvmRpcService {
 
-    private final Map<Integer, Web3j> chainIdToWeb3j = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(EvmRpcService.class);
+    private final ChainConfigManager chainConfigManager;
 
-    @Value("${rpc.mapping}")
-    public void setChainIdToRpc(String rpcMappingJson) throws JsonProcessingException {
-        initializeWeb3jInstances(rpcMappingJson);
-    }
-
-    private void initializeWeb3jInstances(String rpcMappingJson) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<Integer, String> chainIdToRpc = mapper.readValue(rpcMappingJson, new TypeReference<>() {});
-        chainIdToRpc.forEach((chainId, rpcUrl) -> {
-            chainIdToWeb3j.put(chainId, Web3j.build(new HttpService(rpcUrl)));
-            logger.info("Added chainId {} with RPC {}", chainId, rpcUrl);
-        });
+    @Autowired
+    public EvmRpcService(ChainConfigManager chainConfigManager) {
+        this.chainConfigManager = chainConfigManager;
     }
 
     public String getTokenName(Address contractAddress, int chainId) {
@@ -79,7 +63,7 @@ public class EvmRpcService {
     private EthCall executeEthCall(Address contractAddress, int chainId, Function function) {
         try {
             logger.trace("Calling contract function {} on token {} on chain {}", function.getName(), contractAddress, chainId);
-            return Optional.ofNullable(chainIdToWeb3j.get(chainId))
+            return Optional.ofNullable(chainConfigManager.getWeb3jInstanceForChain(chainId))
                     .orElseThrow(() -> new RuntimeException("No Web3j instance for chainId: " + chainId))
                     .ethCall(Transaction.createEthCallTransaction(null, contractAddress.toString(), FunctionEncoder.encode(function)), DefaultBlockParameterName.LATEST)
                     .send();

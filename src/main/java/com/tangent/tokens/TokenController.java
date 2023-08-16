@@ -35,7 +35,7 @@ public class TokenController {
             @PathVariable("address") String addressParam,
             @RequestParam(name="chainId", required = false, defaultValue = "1") int chainId)
     {
-
+        logger.info("Getting token with address {} on chain {}", addressParam, chainId);
         Address address;
         try {
             address = Address.fromString(addressParam);

@@ -3,6 +3,7 @@ package com.tangent.tokens.service;
 import com.tangent.tokens.model.Address;
 import com.tangent.tokens.model.Token;
 import com.tangent.tokens.repository.TokenRepository;
+import com.tangent.tokens.service.evmrpc.EvmRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

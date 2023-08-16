@@ -3,6 +3,7 @@ package com.tangent.tokens.service;
 import com.tangent.tokens.model.Address;
 import com.tangent.tokens.model.Token;
 import com.tangent.tokens.repository.TokenRepository;
+import com.tangent.tokens.service.evmrpc.EvmRpcService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
