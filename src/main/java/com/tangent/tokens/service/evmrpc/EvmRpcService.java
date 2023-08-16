@@ -1,5 +1,6 @@
 package com.tangent.tokens.service.evmrpc;
 
+import com.tangent.tokens.exception.IORuntimeException;
 import com.tangent.tokens.exception.ObjectNotFoundException;
 import com.tangent.tokens.model.Address;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import org.web3j.protocol.core.methods.response.EthCall;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EvmRpcService {
@@ -63,12 +63,12 @@ public class EvmRpcService {
     private EthCall executeEthCall(Address contractAddress, int chainId, Function function) {
         try {
             logger.trace("Calling contract function {} on token {} on chain {}", function.getName(), contractAddress, chainId);
-            return Optional.ofNullable(chainConfigManager.getWeb3jInstanceForChain(chainId))
-                    .orElseThrow(() -> new RuntimeException("No Web3j instance for chainId: " + chainId))
+            return chainConfigManager.getWeb3jInstanceForChain(chainId)
                     .ethCall(Transaction.createEthCallTransaction(null, contractAddress.toString(), FunctionEncoder.encode(function)), DefaultBlockParameterName.LATEST)
                     .send();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.error("Error calling contract function {} on token {} on chain {}", function.getName(), contractAddress, chainId, e);
+            throw new IORuntimeException("Error calling EVM RPC", e);
         }
     }
 

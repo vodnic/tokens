@@ -1,5 +1,7 @@
 package com.tangent.tokens.service.evmrpc;
 
+import com.tangent.tokens.exception.IORuntimeException;
+import com.tangent.tokens.exception.ObjectNotFoundException;
 import com.tangent.tokens.model.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,8 +14,9 @@ import org.web3j.protocol.core.methods.response.EthCall;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class EvmRpcServiceTest {
 
@@ -51,7 +54,28 @@ class EvmRpcServiceTest {
     }
 
     @Test
-    void testGetTokenName() throws IOException {
+    void testEthCallSendThrowsIoException_runtimeExceptionThrown() throws IOException {
+        Address mockAddress = Address.fromString("0x1234567890abcdef1234567890abcdef12345678");
+        when(web3j.ethCall(any(), any())).thenReturn(mockEthCallRequest());
+        when(ethCallRequest.send()).thenThrow(new IOException("Test exception"));
+
+        assertThrowsExactly(
+                IORuntimeException.class,
+                () -> evmRpcService.getTokenName(mockAddress, 1));
+    }
+
+    @Test
+    void testEthCallNoResultFromContractCall_throwsObjectNotFound() throws IOException {
+        Address mockAddress = Address.fromString("0x1234567890abcdef1234567890abcdef12345678");
+        mockWeb3Call("");
+
+        assertThrowsExactly(
+                ObjectNotFoundException.class,
+                () -> evmRpcService.getTokenName(mockAddress, 1));
+    }
+
+    @Test
+    void testGetTokenName() {
         Address mockAddress = Address.fromString("0x1234567890abcdef1234567890abcdef12345678");
         mockWeb3Call("0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000a5465746865722055534400000000000000000000000000000000000000000000");
 
@@ -61,7 +85,7 @@ class EvmRpcServiceTest {
     }
 
     @Test
-    void testGetTokenSymbol() throws IOException {
+    void testGetTokenSymbol() {
         Address mockAddress = Address.fromString("0x1234567890abcdef1234567890abcdef12345678");
         mockWeb3Call("0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000045553445400000000000000000000000000000000000000000000000000000000");
 
@@ -71,7 +95,7 @@ class EvmRpcServiceTest {
     }
 
     @Test
-    void testGetTokenDecimals() throws IOException {
+    void testGetTokenDecimals() {
         Address mockAddress = Address.fromString("0x1234567890abcdef1234567890abcdef12345678");
         mockWeb3Call("0x0000000000000000000000000000000000000000000000000000000000000006");
 
