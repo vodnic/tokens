@@ -39,6 +39,18 @@ public class TokenControllerTest {
     }
 
     @Test
+    public void testGetTokensFilterBySymbol_requestedToken() throws Exception {
+        Token mockToken = new Token();
+        when(tokenService.getTokenBySymbolAndChain("DAI", 1)).thenReturn(Collections.singletonList(mockToken));
+
+        mockMvc.perform(get("/token?symbol=DAI"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").exists());
+
+        verify(tokenService, times(1)).getTokenBySymbolAndChain("DAI", 1);
+    }
+
+    @Test
     public void testGetTokenById_returnsToken() throws Exception {
         String addressParam = "0x23f4569002a5A07f0Ecf688142eEB6bcD883eeF8";
         Address mockAddress = Address.fromString(addressParam);

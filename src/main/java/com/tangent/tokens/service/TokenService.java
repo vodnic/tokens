@@ -48,4 +48,7 @@ public class TokenService {
         return tokenRepository.findAll();
     }
 
+    public List<Token> getTokenBySymbolAndChain(String symbol, int chainId) {
+        return tokenRepository.findBySymbolAndChainId(symbol.toUpperCase(), chainId);
+    }
 }

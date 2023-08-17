@@ -25,7 +25,14 @@ public class TokenController {
     }
 
     @GetMapping
-    public List<Token> getToken() {
+    public List<Token> getToken(
+            @RequestParam(name="symbol", required = false) String symbol,
+            @RequestParam(name="chainId", required = false, defaultValue = "1") int chainId
+    ) {
+        if (symbol != null) {
+            logger.info("Getting token with symbol {} on chain {}", symbol, chainId);
+            return tokenService.getTokenBySymbolAndChain(symbol, chainId);
+        }
         logger.info("Getting all tokens");
         return tokenService.listTokens();
     }

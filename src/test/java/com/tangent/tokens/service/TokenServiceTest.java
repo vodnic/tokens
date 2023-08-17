@@ -48,6 +48,18 @@ class TokenServiceTest {
     }
 
     @Test
+    public void testGetTokenBySymbolAndChain_dbEntryExists_returnStored() {
+        Address address = Address.fromString("0x7d90d74b3501440f95fb8ee55af2ed2933c18fdd");
+        int chainId = 1;
+        Token token = new Token();
+        when(tokenRepository.findBySymbolAndChainId("DAI", chainId)).thenReturn(Collections.singletonList(token));
+
+        List<Token> result = tokenService.getTokenBySymbolAndChain("DAI", chainId);
+
+        assertEquals(token, result.get(0));
+    }
+
+    @Test
     public void testGetTokenByAddressAndChain_dbEntryExists_returnStored() {
         Address address = Address.fromString("0x7d90d74b3501440f95fb8ee55af2ed2933c18fdd");
         int chainId = 1;
